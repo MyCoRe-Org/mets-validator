@@ -1,11 +1,16 @@
 package org.mycore.mets.validator;
 
-import java.util.List;
-
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
+import org.jdom2.filter.Filters;
 import org.jdom2.located.LocatedElement;
+import org.jdom2.xpath.XPathExpression;
+import org.jdom2.xpath.XPathFactory;
 import org.mycore.mets.validator.validators.ValidationException;
+
+import java.util.List;
 
 /**
  * Some utility methods required for the validation.
@@ -123,6 +128,45 @@ public abstract class ValidatorUtil {
         return getStructMap(mets, "LOGICAL");
     }
 
+
+    public static Boolean hasLinkedChildren(Element mets, String logicalId) throws ValidationException {
+        Element logicalStructMap = ValidatorUtil.getLogicalStructMap(mets);
+        Element logicalDiv = getDivByLogicalId(mets, logicalId);
+        List<Element> children = logicalDiv.getChildren();
+
+        if (hasLinkedChildren(mets, children, getSmLinks(mets.getChild("structLink", METS)))) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private static boolean hasLinkedChildren(Element mets, List<Element> children, Multimap<String, String> smLinks) throws ValidationException {
+        // First check if any child is direct linked
+        for (Element child : children) {
+            String id = child.getAttributeValue("ID");
+            if (smLinks.containsKey(id)) {
+                return true;
+            }
+        }
+
+        for (Element child : children) {
+            String id = child.getAttributeValue("ID");
+            if (hasLinkedChildren(mets, child.getChildren(), smLinks)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static Element getDivByLogicalId(Element mets, String logicalId) {
+        XPathExpression<Element> elementXPathExpression;
+        String xpathString = "mets:structMap[@TYPE='LOGICAL']//mets:div[@ID='" + logicalId + "']";
+        elementXPathExpression = XPathFactory.instance().compile(xpathString, Filters.element(),
+                null, METS);
+        return elementXPathExpression.evaluateFirst(mets);
+    }
+
     /**
      * Helper method to get the structMap[@TYPE='LOGICAL'] element of the mets document.
      * 
@@ -143,4 +187,14 @@ public abstract class ValidatorUtil {
         return null;
     }
 
+    public static Multimap<String, String> getSmLinks(Element structLink) throws ValidationException {
+        HashMultimap<String, String> map = HashMultimap.create();
+        List<Element> smLinks = checkElements(structLink, "smLink");
+        for (Element smLink : smLinks) {
+            String from = checkNullAndEmptyAttribute(smLink, "from", XLINK);
+            String to = checkNullAndEmptyAttribute(smLink, "to", XLINK);
+            map.put(from, to);
+        }
+        return map;
+    }
 }

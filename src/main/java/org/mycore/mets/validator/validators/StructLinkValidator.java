@@ -1,16 +1,14 @@
 package org.mycore.mets.validator.validators;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.google.common.collect.Multimap;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.filter.ElementFilter;
 import org.jdom2.util.IteratorIterable;
 import org.mycore.mets.validator.ValidatorUtil;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
+import java.util.ArrayList;
+import java.util.List;
 
 public class StructLinkValidator implements Validator {
 
@@ -22,7 +20,7 @@ public class StructLinkValidator implements Validator {
         List<String> physicalIds = getPhysicalIds(mets);
         List<String> logicalIds = getLogicalIds(mets);
 
-        Multimap<String, String> smLinks = getSmLinks(structLink);
+        Multimap<String, String> smLinks = ValidatorUtil.getSmLinks(structLink);
 
         // check missing
         ArrayList<String> missingLogicalDivs = new ArrayList<String>(logicalIds);
@@ -30,6 +28,15 @@ public class StructLinkValidator implements Validator {
 
         ArrayList<String> missingPhysicallDivs = new ArrayList<String>(physicalIds);
         missingPhysicallDivs.removeAll(smLinks.values());
+
+        // check if children are linked
+        List<String> foundLogicalDivs = new ArrayList<>();
+        for (String missingLogicalDiv : missingLogicalDivs) {
+            if(ValidatorUtil.hasLinkedChildren(mets, missingLogicalDiv)){
+                foundLogicalDivs.add(missingLogicalDiv);
+            }
+        }
+        missingLogicalDivs.removeAll(foundLogicalDivs);
 
         if (!missingLogicalDivs.isEmpty()) {
             ValidatorUtil.throwException(structLink,
@@ -54,17 +61,6 @@ public class StructLinkValidator implements Validator {
             ValidatorUtil.throwException(structLink, "Some linked physical elements does not exist: "
                 + notExistingPhysicalDivs.toString());
         }
-    }
-
-    private Multimap<String, String> getSmLinks(Element structLink) throws ValidationException {
-        HashMultimap<String, String> map = HashMultimap.create();
-        List<Element> smLinks = ValidatorUtil.checkElements(structLink, "smLink");
-        for (Element smLink : smLinks) {
-            String from = ValidatorUtil.checkNullAndEmptyAttribute(smLink, "from", ValidatorUtil.XLINK);
-            String to = ValidatorUtil.checkNullAndEmptyAttribute(smLink, "to", ValidatorUtil.XLINK);
-            map.put(from, to);
-        }
-        return map;
     }
 
     private List<String> getLogicalIds(Element mets) {
