@@ -1,21 +1,15 @@
 package org.mycore.mets.validator;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.jdom2.Document;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.located.LocatedJDOMFactory;
-import org.mycore.mets.validator.validators.FileSectionValidator;
-import org.mycore.mets.validator.validators.LogicalStructMapValidator;
-import org.mycore.mets.validator.validators.PhysicalStructureValidator;
-import org.mycore.mets.validator.validators.SchemaValidator;
-import org.mycore.mets.validator.validators.StructLinkValidator;
-import org.mycore.mets.validator.validators.ValidationException;
-import org.mycore.mets.validator.validators.Validator;
+import org.mycore.mets.validator.validators.*;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Base validation class.
@@ -24,15 +18,15 @@ import org.mycore.mets.validator.validators.Validator;
  */
 public class METSValidator {
 
-    private InputStream in;
+    private Document document;
 
     /**
      * Creates a new mets validator with the input stream to validate.
      * 
      * @param in validate this input
      */
-    public METSValidator(InputStream in) {
-        this.in = in;
+    public METSValidator(InputStream in) throws JDOMException, IOException {
+        document = buildDocument(in);
     }
 
     /**
@@ -56,14 +50,7 @@ public class METSValidator {
      * @return A list of validation exceptions. This list is empty when everything is fine.
      */
     public List<ValidationException> validate() {
-        Document document;
         List<ValidationException> errorList = new ArrayList<ValidationException>();
-        try {
-            document = buildDocument(this.in);
-        } catch (Exception exc) {
-            errorList.add(new ValidationException(exc));
-            return errorList;
-        }
         for (Validator validator : getValidators()) {
             validate(validator, document, errorList);
         }
@@ -98,8 +85,6 @@ public class METSValidator {
             validator.validate(document);
         } catch (ValidationException validationException) {
             errorList.add(validationException);
-        } catch (Exception exc) {
-            errorList.add(new ValidationException(exc));
         }
     }
 
