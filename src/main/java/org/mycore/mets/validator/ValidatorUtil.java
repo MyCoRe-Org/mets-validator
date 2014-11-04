@@ -130,7 +130,6 @@ public abstract class ValidatorUtil {
 
 
     public static Boolean hasLinkedChildren(Element mets, String logicalId) throws ValidationException {
-        Element logicalStructMap = ValidatorUtil.getLogicalStructMap(mets);
         Element logicalDiv = getDivByLogicalId(mets, logicalId);
         List<Element> children = logicalDiv.getChildren();
 

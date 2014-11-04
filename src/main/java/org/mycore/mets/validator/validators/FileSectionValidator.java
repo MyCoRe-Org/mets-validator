@@ -1,12 +1,12 @@
 package org.mycore.mets.validator.validators;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.mycore.mets.validator.ValidatorUtil;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
 
 /**
  * Validates the file section.
@@ -40,7 +40,7 @@ public class FileSectionValidator implements Validator {
         }
         for (Element file : files) {
             validateFileId(file);
-            validateMimeType(file, "text/xml");
+            validateMimeType(file, "/xml");
             String href = validateFLocat(file);
             if (!href.startsWith("alto/")) {
                 ValidatorUtil.throwException(file, "alto file is not placed in 'alto/' directory.");
@@ -83,7 +83,7 @@ public class FileSectionValidator implements Validator {
         if (mimeType == null) {
             ValidatorUtil.throwException(file, "mets:file has no @MIMETYPE.");
         }
-        if (!mimeType.startsWith(expectedMimeType)) {
+        if (!mimeType.startsWith(expectedMimeType) && !mimeType.endsWith(expectedMimeType)) {
             ValidatorUtil.throwException(file, "mets:file has an invalid mimetype. Should start with '"
                 + expectedMimeType + "' but is '" + mimeType + "'");
         }
