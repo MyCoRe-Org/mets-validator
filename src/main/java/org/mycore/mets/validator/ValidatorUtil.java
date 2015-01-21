@@ -2,8 +2,10 @@ package org.mycore.mets.validator;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+
 import org.jdom2.Element;
 import org.jdom2.Namespace;
+import org.jdom2.filter.Filter;
 import org.jdom2.filter.Filters;
 import org.jdom2.located.LocatedElement;
 import org.jdom2.xpath.XPathExpression;
@@ -36,6 +38,29 @@ public abstract class ValidatorUtil {
             throw new ValidationException(message, le.getLine());
         }
         throw new ValidationException(message);
+    }
+
+    /**
+     * Checks if the given xpath is valid.
+     * 
+     * @param parent
+     * @param xpath
+     * @param filter
+     * @return
+     * @throws ValidationException
+     */
+    public static <T> T checkXPath(Element parent, String xpath, Filter<T> filter) throws ValidationException {
+        XPathExpression<T> compile = XPathFactory.instance().compile(xpath, filter, null, ValidatorUtil.METS);
+        try {
+            T firstValue = compile.evaluateFirst(parent);
+            if (firstValue == null) {
+                ValidatorUtil.throwException(parent, "Invalid xpath " + xpath);
+            }
+            return firstValue;
+        } catch (Exception exc) {
+            ValidatorUtil.throwException(parent, "Invalid xpath " + xpath);
+        }
+        return null;
     }
 
     /**
@@ -128,7 +153,6 @@ public abstract class ValidatorUtil {
         return getStructMap(mets, "LOGICAL");
     }
 
-
     public static Boolean hasLinkedChildren(Element mets, String logicalId) throws ValidationException {
         Element logicalDiv = getDivByLogicalId(mets, logicalId);
         List<Element> children = logicalDiv.getChildren();
@@ -140,7 +164,8 @@ public abstract class ValidatorUtil {
         return false;
     }
 
-    private static boolean hasLinkedChildren(Element mets, List<Element> children, Multimap<String, String> smLinks) throws ValidationException {
+    private static boolean hasLinkedChildren(Element mets, List<Element> children, Multimap<String, String> smLinks)
+        throws ValidationException {
         // First check if any child is direct linked
         for (Element child : children) {
             String id = child.getAttributeValue("ID");
@@ -150,7 +175,6 @@ public abstract class ValidatorUtil {
         }
 
         for (Element child : children) {
-            String id = child.getAttributeValue("ID");
             if (hasLinkedChildren(mets, child.getChildren(), smLinks)) {
                 return true;
             }
@@ -161,8 +185,7 @@ public abstract class ValidatorUtil {
     private static Element getDivByLogicalId(Element mets, String logicalId) {
         XPathExpression<Element> elementXPathExpression;
         String xpathString = "mets:structMap[@TYPE='LOGICAL']//mets:div[@ID='" + logicalId + "']";
-        elementXPathExpression = XPathFactory.instance().compile(xpathString, Filters.element(),
-                null, METS);
+        elementXPathExpression = XPathFactory.instance().compile(xpathString, Filters.element(), null, METS);
         return elementXPathExpression.evaluateFirst(mets);
     }
 
