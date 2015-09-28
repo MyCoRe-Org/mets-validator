@@ -30,6 +30,7 @@ public class METSValidator {
     public METSValidator(InputStream in) throws JDOMException, IOException {
         this.document = buildDocument(in);
         this.validatorList = new ArrayList<>();
+        this.addDefaultValidators();
     }
 
     public void addDefaultValidators() {
