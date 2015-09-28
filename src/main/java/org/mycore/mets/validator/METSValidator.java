@@ -20,13 +20,24 @@ public class METSValidator {
 
     private Document document;
 
+    private List<Validator> validatorList;
+
     /**
      * Creates a new mets validator with the input stream to validate.
      * 
      * @param in validate this input
      */
     public METSValidator(InputStream in) throws JDOMException, IOException {
-        document = buildDocument(in);
+        this.document = buildDocument(in);
+        this.validatorList = new ArrayList<>();
+    }
+
+    public void addDefaultValidators() {
+        validatorList.add(new SchemaValidator());
+        validatorList.add(new FileSectionValidator());
+        validatorList.add(new PhysicalStructureValidator());
+        validatorList.add(new LogicalStructMapValidator());
+        validatorList.add(new StructLinkValidator());
     }
 
     /**
@@ -35,13 +46,7 @@ public class METSValidator {
      * @return list of validators
      */
     public List<Validator> getValidators() {
-        List<Validator> validatorList = new ArrayList<Validator>();
-        validatorList.add(new SchemaValidator());
-        validatorList.add(new FileSectionValidator());
-        validatorList.add(new PhysicalStructureValidator());
-        validatorList.add(new LogicalStructMapValidator());
-        validatorList.add(new StructLinkValidator());
-        return validatorList;
+        return this.validatorList;
     }
 
     /**
