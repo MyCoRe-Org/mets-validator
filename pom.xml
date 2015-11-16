@@ -14,7 +14,7 @@
     <url>https://mycore.atlassian.net/browse/METSVALID</url>
   </issueManagement>
   <properties>
-    <java.target.version>1.7</java.target.version>
+    <java.target.version>1.8</java.target.version>
   </properties>
   <scm>
     <connection>scm:svn:http://server.mycore.de/svn/maven/mets-validator/trunk</connection>

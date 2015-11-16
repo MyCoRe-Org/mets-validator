@@ -1,5 +1,6 @@
 package org.mycore.mets.validator.validators;
 
+import java.util.HashSet;
 import java.util.List;
 
 import org.jdom2.Document;
@@ -15,19 +16,29 @@ public class LogicalStructMapValidator implements Validator {
         Element mets = document.getRootElement();
         Element logicalStructMap = ValidatorUtil.getLogicalStructMap(mets);
         if (logicalStructMap == null) {
-            ValidatorUtil.throwException(mets, "Missing mets:structMap TYPE='LOGICAL' element.");
+            ValidatorUtil.throwException(mets, "Missing <mets:structMap[@TYPE='LOGICAL']> element.");
         }
 
         // check surrounding div
-        Element surroundingDiv = ValidatorUtil.checkElement(logicalStructMap, "div");
-        ValidatorUtil.checkNullAttribute(surroundingDiv, "TYPE");
-        ValidatorUtil.checkNullAndEmptyAttribute(surroundingDiv, "LABEL");
+        Element rootDiv = ValidatorUtil.checkElement(logicalStructMap, "div");
+        ValidatorUtil.checkNullAttribute(rootDiv, "TYPE");
+        ValidatorUtil.checkNullAndEmptyAttribute(rootDiv, "LABEL");
+
+        // check unique id's
+        HashSet<String> ids = new HashSet<>();
 
         // check all div
-        IteratorIterable<Element> divsIterator = surroundingDiv.getDescendants(new ElementFilter("div",
+        IteratorIterable<Element> divsIterator = rootDiv.getDescendants(new ElementFilter("div",
             ValidatorUtil.METS));
+        if(!divsIterator.hasNext()) {
+            ValidatorUtil.throwException(rootDiv, "Root <mets:div> in <mets:structMap[@TYPE='LOGICAL']> has no descendents!");
+        }
         while (divsIterator.hasNext()) {
             Element div = divsIterator.next();
+            String id = ValidatorUtil.checkNullAttribute(div, "ID");
+            if(!ids.add(id)) {
+                ValidatorUtil.throwException(div, "Duplicate @ID " + id + ". ID's have to be unique in logical structmap.");
+            }
             ValidatorUtil.checkNullAttribute(div, "TYPE");
             ValidatorUtil.checkNullAndEmptyAttribute(div, "LABEL");
             ValidatorUtil.checkNullAttribute(div, "ORDER");
