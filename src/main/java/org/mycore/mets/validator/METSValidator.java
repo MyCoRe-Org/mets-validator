@@ -1,5 +1,13 @@
 package org.mycore.mets.validator;
 
+import org.jdom2.Document;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.located.LocatedJDOMFactory;
+import org.jdom2.output.XMLOutputter;
+import org.mycore.mets.validator.validators.*;
+
+import javax.xml.transform.TransformerException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -7,28 +15,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamResult;
-
-import org.jdom2.Document;
-import org.jdom2.JDOMException;
-import org.jdom2.input.SAXBuilder;
-import org.jdom2.located.LocatedJDOMFactory;
-import org.jdom2.transform.JDOMSource;
-import org.mycore.mets.validator.validators.FileSectionValidator;
-import org.mycore.mets.validator.validators.LogicalStructMapValidator;
-import org.mycore.mets.validator.validators.PhysicalStructureValidator;
-import org.mycore.mets.validator.validators.SchemaValidator;
-import org.mycore.mets.validator.validators.StructLinkValidator;
-import org.mycore.mets.validator.validators.ValidationException;
-import org.mycore.mets.validator.validators.Validator;
-
 /**
  * Base validation class.
- * 
+ *
  * @author Matthias Eichner
  */
 public class METSValidator {
@@ -43,26 +32,30 @@ public class METSValidator {
      * @param doc the document to validate
      */
     public METSValidator(Document doc) throws JDOMException, IOException, TransformerException {
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        Source xmlSource = new JDOMSource(doc);
-        Result outputTarget = new StreamResult(os);
-        TransformerFactory.newInstance().newTransformer().transform(xmlSource, outputTarget);
-        InputStream is = new ByteArrayInputStream(os.toByteArray());
+        InputStream is = getInputStream(doc);
+        init(is);
+    }
+
+    /**
+     * Creates a new mets validator with the input stream to validate.
+     *
+     * @param is validate this input
+     */
+    public METSValidator(InputStream is) throws JDOMException, IOException {
+        init(is);
+    }
+
+    private void init(InputStream is) throws JDOMException, IOException {
         this.document = buildDocument(is);
         this.validatorList = new ArrayList<>();
         this.addDefaultValidators();
         is.close();
     }
 
-    /**
-     * Creates a new mets validator with the input stream to validate.
-     * 
-     * @param in validate this input
-     */
-    public METSValidator(InputStream in) throws JDOMException, IOException {
-        this.document = buildDocument(in);
-        this.validatorList = new ArrayList<>();
-        this.addDefaultValidators();
+    private InputStream getInputStream(Document doc) throws IOException {
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        new XMLOutputter().output(doc, os);
+        return new ByteArrayInputStream(os.toByteArray());
     }
 
     public void addDefaultValidators() {
