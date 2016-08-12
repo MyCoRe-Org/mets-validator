@@ -30,9 +30,6 @@ public class LogicalStructMapValidator implements Validator {
         // check all div
         IteratorIterable<Element> divsIterator = rootDiv.getDescendants(new ElementFilter("div",
             ValidatorUtil.METS));
-        if(!divsIterator.hasNext()) {
-            ValidatorUtil.throwException(rootDiv, "Root <mets:div> in <mets:structMap[@TYPE='LOGICAL']> has no descendents!");
-        }
         while (divsIterator.hasNext()) {
             Element div = divsIterator.next();
             String id = ValidatorUtil.checkNullAttribute(div, "ID");
