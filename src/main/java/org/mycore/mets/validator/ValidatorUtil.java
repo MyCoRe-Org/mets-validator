@@ -1,7 +1,6 @@
 package org.mycore.mets.validator;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
+import java.util.List;
 
 import org.jdom2.Element;
 import org.jdom2.Namespace;
@@ -12,7 +11,8 @@ import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 import org.mycore.mets.validator.validators.ValidationException;
 
-import java.util.List;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 
 /**
  * Some utility methods required for the validation.
@@ -107,6 +107,22 @@ public abstract class ValidatorUtil {
         String attributeValue = element.getAttributeValue(attributeName, namespace);
         if (attributeValue == null || attributeValue.equals("")) {
             ValidatorUtil.throwException(element, "Missing or empty @" + attributeName + " attribute.");
+        }
+        return attributeValue;
+    }
+
+    /**
+     * checks if present attribute with a given name is not empty
+     *
+     * @param element
+     * @param attrName
+     * @return
+     * @throws ValidationException
+     */
+    public static String checkEmptyAttribute(Element element, String attrName) throws ValidationException {
+        String attributeValue = element.getAttributeValue(attrName);
+        if (element.getAttribute(attrName) != null && attributeValue.isEmpty()) {
+            ValidatorUtil.throwException(element, element.getName() + " " + attrName + " is present but empty!");
         }
         return attributeValue;
     }

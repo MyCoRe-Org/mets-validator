@@ -22,7 +22,7 @@ public class LogicalStructMapValidator implements Validator {
         // check surrounding div
         Element rootDiv = ValidatorUtil.checkElement(logicalStructMap, "div");
         ValidatorUtil.checkNullAttribute(rootDiv, "TYPE");
-        ValidatorUtil.checkNullAndEmptyAttribute(rootDiv, "LABEL");
+        ValidatorUtil.checkEmptyAttribute(rootDiv, "LABEL");
 
         // check unique id's
         HashSet<String> ids = new HashSet<>();
@@ -37,8 +37,7 @@ public class LogicalStructMapValidator implements Validator {
                 ValidatorUtil.throwException(div, "Duplicate @ID " + id + ". ID's have to be unique in logical structmap.");
             }
             ValidatorUtil.checkNullAttribute(div, "TYPE");
-            ValidatorUtil.checkNullAndEmptyAttribute(div, "LABEL");
-            ValidatorUtil.checkNullAttribute(div, "ORDER");
+            ValidatorUtil.checkEmptyAttribute(div, "LABEL");
             Element fptr = div.getChild("fptr", ValidatorUtil.METS);
             if (fptr != null) {
                 Element seq = ValidatorUtil.checkElement(fptr, "seq");

@@ -36,9 +36,6 @@ public class PhysicalStructureValidator implements Validator {
             if (div.getAttributeValue("ID") == null) {
                 ValidatorUtil.throwException(div, "div requires @ID attribute.");
             }
-            if (div.getAttributeValue("ORDER") == null) {
-                ValidatorUtil.throwException(div, "div requires @ORDER attribute.");
-            }
             List<Element> fptrs = div.getChildren("fptr", ValidatorUtil.METS);
             if (fptrs.isEmpty()) {
                 ValidatorUtil.throwException(div, "div should contain at least one mets:fptr @FILEID element.");

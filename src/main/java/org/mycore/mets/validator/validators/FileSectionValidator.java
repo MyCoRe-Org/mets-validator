@@ -1,12 +1,12 @@
 package org.mycore.mets.validator.validators;
 
-import org.jdom2.Document;
-import org.jdom2.Element;
-import org.mycore.mets.validator.ValidatorUtil;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.mycore.mets.validator.ValidatorUtil;
 
 /**
  * Validates the file section.
@@ -23,8 +23,8 @@ public class FileSectionValidator implements Validator {
             throw new ValidationException("No mets:fileSec element.");
         }
         Element masterFileGrp = getFileGroup(fileSec, "MASTER");
-        if (masterFileGrp == null) {
-            throw new ValidationException("No fileGrp with @USE='MASTER'.");
+        if (masterFileGrp == null && (masterFileGrp = getFileGroup(fileSec, "IVIEW")) == null) {
+            throw new ValidationException("No fileGrp with @USE='MASTER' or @USE='IVIEW'.");
         }
         validateMasterFileGroup(masterFileGrp);
         Element altoFileGrp = getFileGroup(fileSec, "ALTO");
