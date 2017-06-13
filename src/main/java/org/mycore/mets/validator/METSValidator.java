@@ -1,19 +1,24 @@
 package org.mycore.mets.validator;
 
-import org.jdom2.Document;
-import org.jdom2.JDOMException;
-import org.jdom2.input.SAXBuilder;
-import org.jdom2.located.LocatedJDOMFactory;
-import org.jdom2.output.XMLOutputter;
-import org.mycore.mets.validator.validators.*;
-
-import javax.xml.transform.TransformerException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.jdom2.Document;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.located.LocatedJDOMFactory;
+import org.jdom2.output.XMLOutputter;
+import org.mycore.mets.validator.validators.FileSectionValidator;
+import org.mycore.mets.validator.validators.LogicalStructMapValidator;
+import org.mycore.mets.validator.validators.PhysicalStructureValidator;
+import org.mycore.mets.validator.validators.SchemaValidator;
+import org.mycore.mets.validator.validators.StructLinkValidator;
+import org.mycore.mets.validator.validators.ValidationException;
+import org.mycore.mets.validator.validators.Validator;
 
 /**
  * Base validation class.
@@ -31,9 +36,13 @@ public class METSValidator {
      * 
      * @param doc the document to validate
      */
-    public METSValidator(Document doc) throws JDOMException, IOException, TransformerException {
+    public METSValidator(Document doc) throws JDOMException, IOException {
         InputStream is = getInputStream(doc);
-        init(is);
+        try {
+            init(is);
+        } finally {
+            is.close();
+        }
     }
 
     /**
@@ -49,7 +58,6 @@ public class METSValidator {
         this.document = buildDocument(is);
         this.validatorList = new ArrayList<>();
         this.addDefaultValidators();
-        is.close();
     }
 
     private InputStream getInputStream(Document doc) throws IOException {
@@ -67,9 +75,9 @@ public class METSValidator {
     }
 
     /**
-     * List of all validators which should be used in the validation process.
+     * List of all validator's which should be used in the validation process.
      * 
-     * @return list of validators
+     * @return list of validator's
      */
     public List<Validator> getValidators() {
         return this.validatorList;

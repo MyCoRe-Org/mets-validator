@@ -1,5 +1,4 @@
 /**
- * @author matthias
- *
+ * @author Matthias Eichner
  */
 package org.mycore.mets.validator;

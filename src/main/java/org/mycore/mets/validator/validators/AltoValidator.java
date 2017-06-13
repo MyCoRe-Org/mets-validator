@@ -18,7 +18,6 @@ import org.mycore.mets.validator.ValidatorUtil;
  * it to the validation process by calling {@link METSValidator#getValidators()}
  * 
  * @author Matthias Eichner
- *
  */
 public class AltoValidator implements Validator {
 
@@ -37,11 +36,11 @@ public class AltoValidator implements Validator {
         Element logicalStructMap = ValidatorUtil.getLogicalStructMap(mets);
         Map<String, Object> variables = new HashMap<>();
         variables.put("id", null);
-        XPathExpression<Element> idExp = XPathFactory.instance().compile("./mets:div//mets:fptr/mets:seq/mets:area[@FILEID=$id]", Filters.element(),
-            variables, ValidatorUtil.METS);
+        XPathExpression<Element> idExp = XPathFactory.instance().compile(
+            "./mets:div//mets:fptr/mets:seq/mets:area[@FILEID=$id]", Filters.element(), variables, ValidatorUtil.METS);
         for (String id : altoFileIds) {
             idExp.setVariable("id", id);
-            if(idExp.evaluateFirst(logicalStructMap) == null) {
+            if (idExp.evaluateFirst(logicalStructMap) == null) {
                 throw new ValidationException("Unable to find the alto id '" + id + "' in the logical struct map.");
             }
         }

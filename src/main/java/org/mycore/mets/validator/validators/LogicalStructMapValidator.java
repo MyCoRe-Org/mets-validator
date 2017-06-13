@@ -44,10 +44,13 @@ public class LogicalStructMapValidator implements Validator {
                 List<Element> areas = ValidatorUtil.checkElements(seq, "area");
                 for (Element area : areas) {
                     ValidatorUtil.checkNullAttribute(area, "FILEID");
-                    ValidatorUtil.checkNullAttribute(area, "BEGIN");
-                    ValidatorUtil.checkNullAttribute(area, "END");
-                    if (area.getAttributeValue("BETYPE") == null || !area.getAttributeValue("BETYPE").equals("IDREF")) {
-                        ValidatorUtil.throwException(area, "@BETYPE attribute required. Should be @BETYPE='IDREF'");
+                    String beType = area.getAttributeValue("BETYPE");
+                    if(beType != null) {
+                        if (!beType.equals("IDREF")) {
+                            ValidatorUtil.throwException(area, "@BETYPE should be 'IDREF' and not '" + beType + "'");
+                        }
+                        ValidatorUtil.checkNullAttribute(area, "BEGIN");
+                        ValidatorUtil.checkNullAttribute(area, "END");
                     }
                 }
             }
