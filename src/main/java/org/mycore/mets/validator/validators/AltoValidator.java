@@ -26,6 +26,9 @@ public class AltoValidator implements Validator {
         Element mets = document.getRootElement();
         Element altoFileGroup = ValidatorUtil.checkXPath(mets, "./mets:fileSec/mets:fileGrp[@USE='ALTO']",
             Filters.element());
+        if (altoFileGroup == null) {
+            throw new ValidationException("mets:fileSec/mets:fileGrp[@USE='ALTO'] does not exist");
+        }
         List<Element> files = ValidatorUtil.checkElements(altoFileGroup, "file");
         // get all alto file id's
         List<String> altoFileIds = new ArrayList<>();

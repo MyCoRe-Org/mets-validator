@@ -29,7 +29,7 @@ public class SchemaValidator implements Validator {
     @Override
     public void validate(Document document) throws ValidationException {
         try {
-            URL xsd = getClass().getResource("/mets_1.10.xsd");
+            URL xsd = getClass().getResource("/mets_1.12.1.xsd");
             if (xsd == null) {
                 throw new RuntimeException("Unable to read mets.xsd!");
             }

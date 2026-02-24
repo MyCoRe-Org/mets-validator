@@ -16,6 +16,6 @@ public interface Validator {
      * @param document the document to validate
      * @throws ValidationException is thrown when the document is invalid
      */
-    public void validate(Document document) throws ValidationException;
+    void validate(Document document) throws ValidationException;
 
 }

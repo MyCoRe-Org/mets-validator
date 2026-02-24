@@ -1,9 +1,10 @@
 package org.mycore.mets.validator.validators;
 
-import com.google.gson.JsonObject;
+import java.io.Serial;
 
 public class ValidationException extends Exception {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private int lineNumber = -1;
@@ -25,16 +26,8 @@ public class ValidationException extends Exception {
         super(message, cause);
     }
 
-    public JsonObject toJSON() {
-        JsonObject o = new JsonObject();
-        o.addProperty("message", getMessage());
-        if (lineNumber != -1) {
-            o.addProperty("lineNumber", lineNumber);
-        }
-        if (getCause() != null) {
-            o.addProperty("cause", getCause().getMessage());
-        }
-        return o;
+    public int getLineNumber() {
+        return lineNumber;
     }
 
 }

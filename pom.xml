@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.mycore</groupId>
     <artifactId>mycore-parent</artifactId>
-    <version>37-SNAPSHOT</version>
+    <version>58</version>
   </parent>
   <groupId>org.mycore.mets</groupId>
   <artifactId>mets-validator</artifactId>
@@ -20,57 +20,11 @@
     <url>https://github.com/MyCoRe-Org/mets-validator</url>
     <tag>HEAD</tag>
   </scm>
-  <properties>
-    <java.target.version>1.8</java.target.version>
-  </properties>
-  <repositories>
-    <repository>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-    </repository>
-  </repositories>
   <dependencies>
-    <dependency>
-      <groupId>com.google.code.gson</groupId>
-      <artifactId>gson</artifactId>
-      <version>2.8.2</version>
-    </dependency>
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <version>23.0</version>
-    </dependency>
     <dependency>
       <groupId>org.jdom</groupId>
       <artifactId>jdom2</artifactId>
-      <version>2.0.6</version>
-    </dependency>
-    <dependency>
-      <!-- required by jdom 2.0.6 -->
-      <groupId>jaxen</groupId>
-      <artifactId>jaxen</artifactId>
-      <version>1.1.6</version>
-      <scope>runtime</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>jdom</groupId>
-          <artifactId>jdom2</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>xom</groupId>
-          <artifactId>xom</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>xml-apis</groupId>
-          <artifactId>xml-apis</artifactId>
-        </exclusion>
-      </exclusions>
+      <version>2.0.6.1</version>
     </dependency>
   </dependencies>
   <developers>
@@ -79,7 +33,7 @@
       <name>Matthias Eichner</name>
       <email>matthias.eichner (at) uni-jena.de</email>
       <organization>Friedrich-Schiller-Universität Jena, Thüringer Universitäts- und Landesbibliothek</organization>
-      <organizationUrl>http://www.thulb.uni-jena.de/</organizationUrl>
+      <organizationUrl>https://www.thulb.uni-jena.de/</organizationUrl>
       <roles>
         <role>developer</role>
       </roles>
@@ -90,7 +44,7 @@
       <name>Sebastian Hofmann</name>
       <email>vo62xat (at) uni-jena.de</email>
       <organization>Friedrich-Schiller-Universität Jena, Thüringer Universitäts- und Landesbibliothek</organization>
-      <organizationUrl>http://www.thulb.uni-jena.de/</organizationUrl>
+      <organizationUrl>https://www.thulb.uni-jena.de/</organizationUrl>
       <roles>
         <role>developer</role>
       </roles>
@@ -101,7 +55,7 @@
       <name>Thomas Scheffler</name>
       <email>thomas.scheffler (at) uni-jena.de</email>
       <organization>Friedrich-Schiller-Universität Jena, Thüringer Universitäts- und Landesbibliothek</organization>
-      <organizationUrl>http://www.thulb.uni-jena.de/</organizationUrl>
+      <organizationUrl>https://www.thulb.uni-jena.de/</organizationUrl>
       <roles>
         <role>developer</role>
       </roles>
@@ -112,7 +66,7 @@
       <name>Hu Chi Vu</name>
       <email>chi (at) thulb.uni-jena.de</email>
       <organization>Friedrich-Schiller-Universität Jena, Thüringer Universitäts- und Landesbibliothek</organization>
-      <organizationUrl>http://www.thulb.uni-jena.de/</organizationUrl>
+      <organizationUrl>https://www.thulb.uni-jena.de/</organizationUrl>
       <roles>
         <role>developer</role>
       </roles>
