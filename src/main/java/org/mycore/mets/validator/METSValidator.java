@@ -37,11 +37,8 @@ public class METSValidator {
      * @param doc the document to validate
      */
     public METSValidator(Document doc) throws JDOMException, IOException {
-        InputStream is = getInputStream(doc);
-        try {
+        try (InputStream is = getInputStream(doc)) {
             init(is);
-        } finally {
-            is.close();
         }
     }
 
@@ -89,7 +86,7 @@ public class METSValidator {
      * @return A list of validation exceptions. This list is empty when everything is fine.
      */
     public List<ValidationException> validate() {
-        List<ValidationException> errorList = new ArrayList<ValidationException>();
+        List<ValidationException> errorList = new ArrayList<>();
         for (Validator validator : getValidators()) {
             validate(validator, document, errorList);
         }
@@ -102,8 +99,8 @@ public class METSValidator {
      * 
      * @param in input stream to parse
      * @return jdom document
-     * @throws JDOMException
-     * @throws IOException
+     * @throws JDOMException when errors occur in parsing
+     * @throws IOException when an I/O error prevents a document from being fully parsed.
      */
     protected Document buildDocument(InputStream in) throws JDOMException, IOException {
         SAXBuilder builder = new SAXBuilder();

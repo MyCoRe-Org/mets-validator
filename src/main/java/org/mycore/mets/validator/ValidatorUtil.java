@@ -1,6 +1,10 @@
 package org.mycore.mets.validator;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.jdom2.Element;
 import org.jdom2.Namespace;
@@ -10,9 +14,6 @@ import org.jdom2.located.LocatedElement;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 import org.mycore.mets.validator.validators.ValidationException;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 
 /**
  * Some utility methods required for the validation.
@@ -28,13 +29,12 @@ public abstract class ValidatorUtil {
     /**
      * Throws a {@link ValidationException} with the given message.
      * 
-     * @param e
-     * @param message
-     * @throws ValidationException
+     * @param e element where the exception appeared
+     * @param message message of what went wrong
+     * @throws ValidationException the validation exception
      */
     public static void throwException(Element e, String message) throws ValidationException {
-        if (e instanceof LocatedElement) {
-            LocatedElement le = (LocatedElement) e;
+        if (e instanceof LocatedElement le) {
             throw new ValidationException(message, le.getLine());
         }
         throw new ValidationException(message);
@@ -105,7 +105,7 @@ public abstract class ValidatorUtil {
     public static String checkNullAndEmptyAttribute(Element element, String attributeName, Namespace namespace)
         throws ValidationException {
         String attributeValue = element.getAttributeValue(attributeName, namespace);
-        if (attributeValue == null || attributeValue.equals("")) {
+        if (attributeValue == null || attributeValue.isEmpty()) {
             ValidatorUtil.throwException(element, "Missing or empty @" + attributeName + " attribute.");
         }
         return attributeValue;
@@ -130,11 +130,11 @@ public abstract class ValidatorUtil {
     /**
      * Checks if the parent element has a child with the given name. Throws a {@link ValidationException}
      * if there is no such element.
-     * 
-     * @param parent
-     * @param elementName
+     *
+     * @param parent the parent element
+     * @param elementName name of the element
      * @return return the first element with the elementName
-     * @throws ValidationException
+     * @throws ValidationException if there is no element with given name
      */
     public static Element checkElement(Element parent, String elementName) throws ValidationException {
         Element fptr = parent.getChild(elementName, ValidatorUtil.METS);
@@ -148,10 +148,10 @@ public abstract class ValidatorUtil {
      * Checks if the parent element has a child with the given name. Throws a {@link ValidationException}
      * if there is no such element.
      * 
-     * @param parent
-     * @param elementName
+     * @param parent the parent element
+     * @param elementName name of the element
      * @return a list of all elements with the elementName
-     * @throws ValidationException
+     * @throws ValidationException if there is no element with given name
      */
     public static List<Element> checkElements(Element parent, String elementName) throws ValidationException {
         List<Element> elements = parent.getChildren(elementName, ValidatorUtil.METS);
@@ -175,16 +175,10 @@ public abstract class ValidatorUtil {
     public static Boolean hasLinkedChildren(Element mets, String logicalId) throws ValidationException {
         Element logicalDiv = getDivByLogicalId(mets, logicalId);
         List<Element> children = logicalDiv.getChildren();
-
-        if (hasLinkedChildren(mets, children, getSmLinks(mets.getChild("structLink", METS)))) {
-            return true;
-        }
-
-        return false;
+        return hasLinkedChildren(children, getSmLinks(mets.getChild("structLink", METS)));
     }
 
-    private static boolean hasLinkedChildren(Element mets, List<Element> children, Multimap<String, String> smLinks)
-        throws ValidationException {
+    private static boolean hasLinkedChildren(List<Element> children, Map<String, Set<String>> smLinks) {
         // First check if any child is direct linked
         for (Element child : children) {
             String id = child.getAttributeValue("ID");
@@ -192,9 +186,8 @@ public abstract class ValidatorUtil {
                 return true;
             }
         }
-
         for (Element child : children) {
-            if (hasLinkedChildren(mets, child.getChildren(), smLinks)) {
+            if (hasLinkedChildren(child.getChildren(), smLinks)) {
                 return true;
             }
         }
@@ -228,14 +221,15 @@ public abstract class ValidatorUtil {
         return null;
     }
 
-    public static Multimap<String, String> getSmLinks(Element structLink) throws ValidationException {
-        HashMultimap<String, String> map = HashMultimap.create();
+    public static Map<String, Set<String>> getSmLinks(Element structLink) throws ValidationException {
+        Map<String, Set<String>> map = new HashMap<>();
         List<Element> smLinks = checkElements(structLink, "smLink");
         for (Element smLink : smLinks) {
             String from = checkNullAndEmptyAttribute(smLink, "from", XLINK);
             String to = checkNullAndEmptyAttribute(smLink, "to", XLINK);
-            map.put(from, to);
+            map.computeIfAbsent(from, k -> new HashSet<>()).add(to);
         }
         return map;
     }
+
 }
