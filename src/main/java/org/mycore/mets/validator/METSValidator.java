@@ -33,8 +33,10 @@ public class METSValidator {
 
     /**
      * Creates a new mets validator with the document to validate.
-     * 
+     *
      * @param doc the document to validate
+     * @throws JDOMException when errors occur in parsing
+     * @throws IOException when an I/O error prevents the document from being fully parsed
      */
     public METSValidator(Document doc) throws JDOMException, IOException {
         try (InputStream is = getInputStream(doc)) {
@@ -45,7 +47,9 @@ public class METSValidator {
     /**
      * Creates a new mets validator with the input stream to validate.
      *
-     * @param is validate this input
+     * @param is the input stream to validate
+     * @throws JDOMException when errors occur in parsing
+     * @throws IOException when an I/O error prevents the document from being fully parsed
      */
     public METSValidator(InputStream is) throws JDOMException, IOException {
         init(is);
@@ -63,6 +67,9 @@ public class METSValidator {
         return new ByteArrayInputStream(os.toByteArray());
     }
 
+    /**
+     * Adds the default set of validators used in the validation process.
+     */
     public void addDefaultValidators() {
         validatorList.add(new SchemaValidator());
         validatorList.add(new FileSectionValidator());
@@ -111,10 +118,10 @@ public class METSValidator {
     /**
      * Validates the given document with the validator. All errors are append to
      * the errorList.
-     * 
-     * @param validator
-     * @param document
-     * @param errorList
+     *
+     * @param validator the validator to use
+     * @param document the document to validate
+     * @param errorList the list to append validation errors to
      */
     protected void validate(Validator validator, Document document, List<ValidationException> errorList) {
         try {

@@ -9,7 +9,18 @@ import org.jdom2.filter.ElementFilter;
 import org.jdom2.util.IteratorIterable;
 import org.mycore.mets.validator.ValidatorUtil;
 
+/**
+ * Validates the logical struct map of a METS document.
+ *
+ * @author Matthias Eichner
+ */
 public class LogicalStructMapValidator implements Validator {
+
+    /**
+     * Creates a new LogicalStructMapValidator.
+     */
+    public LogicalStructMapValidator() {
+    }
 
     @Override
     public void validate(Document document) throws ValidationException {

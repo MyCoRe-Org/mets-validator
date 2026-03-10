@@ -22,9 +22,17 @@ import org.mycore.mets.validator.validators.ValidationException;
  */
 public abstract class ValidatorUtil {
 
+    /** The METS namespace. */
     public static Namespace METS = Namespace.getNamespace("mets", "http://www.loc.gov/METS/");
 
+    /** The XLink namespace. */
     public static Namespace XLINK = Namespace.getNamespace("xlink", "http://www.w3.org/1999/xlink");
+
+    /**
+     * Private constructor to prevent instantiation of this utility class.
+     */
+    private ValidatorUtil() {
+    }
 
     /**
      * Throws a {@link ValidationException} with the given message.
@@ -42,12 +50,13 @@ public abstract class ValidatorUtil {
 
     /**
      * Checks if the given xpath is valid.
-     * 
-     * @param parent
-     * @param xpath
-     * @param filter
-     * @return
-     * @throws ValidationException
+     *
+     * @param <T> the type of the result
+     * @param parent the parent element to evaluate the xpath against
+     * @param xpath the xpath expression to evaluate
+     * @param filter the filter to apply to the xpath result
+     * @return the first matching result
+     * @throws ValidationException if the xpath yields no result or evaluation fails
      */
     public static <T> T checkXPath(Element parent, String xpath, Filter<T> filter) throws ValidationException {
         XPathExpression<T> compile = XPathFactory.instance().compile(xpath, filter, null, ValidatorUtil.METS);
@@ -83,11 +92,11 @@ public abstract class ValidatorUtil {
     /**
      * Checks if the element contains an attribute with the given name and it should not be empty ("").
      * Throws an exception if there is no such attribute.
-     * 
-     * @param element
-     * @param attributeName
-     * @return
-     * @throws ValidationException
+     *
+     * @param element the element to check
+     * @param attributeName name of the attribute
+     * @return the value of the attribute
+     * @throws ValidationException if the attribute is missing or empty
      */
     public static String checkNullAndEmptyAttribute(Element element, String attributeName) throws ValidationException {
         return checkNullAndEmptyAttribute(element, attributeName, Namespace.NO_NAMESPACE);
@@ -95,12 +104,12 @@ public abstract class ValidatorUtil {
 
     /**
      * Same as {@link #checkNullAndEmptyAttribute(Element, String)} with a namespace.
-     * 
-     * @param element
-     * @param attributeName
-     * @param namespace
-     * @return
-     * @throws ValidationException
+     *
+     * @param element the element to check
+     * @param attributeName name of the attribute
+     * @param namespace the namespace of the attribute
+     * @return the value of the attribute
+     * @throws ValidationException if the attribute is missing or empty
      */
     public static String checkNullAndEmptyAttribute(Element element, String attributeName, Namespace namespace)
         throws ValidationException {
@@ -112,12 +121,12 @@ public abstract class ValidatorUtil {
     }
 
     /**
-     * checks if present attribute with a given name is not empty
+     * Checks if a present attribute with the given name is not empty.
      *
-     * @param element
-     * @param attrName
-     * @return
-     * @throws ValidationException
+     * @param element the element to check
+     * @param attrName name of the attribute
+     * @return the value of the attribute, or null if the attribute is absent
+     * @throws ValidationException if the attribute is present but empty
      */
     public static String checkEmptyAttribute(Element element, String attrName) throws ValidationException {
         String attributeValue = element.getAttributeValue(attrName);
@@ -164,14 +173,22 @@ public abstract class ValidatorUtil {
 
     /**
      * Helper method to get the structMap[@TYPE='LOGICAL'] element of the mets document.
-     * 
-     * @param mets
+     *
+     * @param mets the root mets element
      * @return the element or null
      */
     public static Element getLogicalStructMap(Element mets) {
         return getStructMap(mets, "LOGICAL");
     }
 
+    /**
+     * Returns whether the logical div with the given ID has any children that are linked via smLink.
+     *
+     * @param mets the root mets element
+     * @param logicalId the ID of the logical div to check
+     * @return true if any descendant is linked, false otherwise
+     * @throws ValidationException if the structLink section is invalid
+     */
     public static Boolean hasLinkedChildren(Element mets, String logicalId) throws ValidationException {
         Element logicalDiv = getDivByLogicalId(mets, logicalId);
         List<Element> children = logicalDiv.getChildren();
@@ -202,15 +219,22 @@ public abstract class ValidatorUtil {
     }
 
     /**
-     * Helper method to get the structMap[@TYPE='LOGICAL'] element of the mets document.
-     * 
-     * @param mets
+     * Helper method to get the structMap[@TYPE='PHYSICAL'] element of the mets document.
+     *
+     * @param mets the root mets element
      * @return the element or null
      */
     public static Element getPhysicalStructMap(Element mets) {
         return getStructMap(mets, "PHYSICAL");
     }
 
+    /**
+     * Returns the structMap element with the given TYPE attribute.
+     *
+     * @param mets the root mets element
+     * @param type the value of the TYPE attribute to look for
+     * @return the matching structMap element, or null if not found
+     */
     public static Element getStructMap(Element mets, String type) {
         List<Element> structMaps = mets.getChildren("structMap", ValidatorUtil.METS);
         for (Element sm : structMaps) {
@@ -221,6 +245,13 @@ public abstract class ValidatorUtil {
         return null;
     }
 
+    /**
+     * Parses all smLink elements and returns a map from logical ID (xlink:from) to a set of physical IDs (xlink:to).
+     *
+     * @param structLink the mets:structLink element
+     * @return a map of logical IDs to sets of linked physical IDs
+     * @throws ValidationException if any smLink is missing required attributes
+     */
     public static Map<String, Set<String>> getSmLinks(Element structLink) throws ValidationException {
         Map<String, Set<String>> map = new HashMap<>();
         List<Element> smLinks = checkElements(structLink, "smLink");

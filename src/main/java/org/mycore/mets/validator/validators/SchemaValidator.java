@@ -26,6 +26,12 @@ import org.jdom2.transform.JDOMSource;
  */
 public class SchemaValidator implements Validator {
 
+    /**
+     * Creates a new SchemaValidator.
+     */
+    public SchemaValidator() {
+    }
+
     @Override
     public void validate(Document document) throws ValidationException {
         try {
@@ -41,6 +47,15 @@ public class SchemaValidator implements Validator {
         }
     }
 
+    /**
+     * Converts a JDOM document to an input stream for schema validation.
+     *
+     * @param doc the document to convert
+     * @return an input stream containing the serialized XML
+     * @throws TransformerConfigurationException if the transformer cannot be configured
+     * @throws TransformerException if serialization fails
+     * @throws TransformerFactoryConfigurationError if the transformer factory cannot be instantiated
+     */
     protected InputStream toInputStream(Document doc) throws TransformerConfigurationException, TransformerException,
         TransformerFactoryConfigurationError {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
