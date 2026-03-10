@@ -6,7 +6,18 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.mycore.mets.validator.ValidatorUtil;
 
+/**
+ * Validates the physical struct map of a METS document.
+ *
+ * @author Matthias Eichner
+ */
 public class PhysicalStructureValidator implements Validator {
+
+    /**
+     * Creates a new PhysicalStructureValidator.
+     */
+    public PhysicalStructureValidator() {
+    }
 
     @Override
     public void validate(Document document) throws ValidationException {

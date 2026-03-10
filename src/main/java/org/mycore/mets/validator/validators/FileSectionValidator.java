@@ -15,6 +15,12 @@ import org.mycore.mets.validator.ValidatorUtil;
  */
 public class FileSectionValidator implements Validator {
 
+    /**
+     * Creates a new FileSectionValidator.
+     */
+    public FileSectionValidator() {
+    }
+
     @Override
     public void validate(Document document) throws ValidationException {
         Element mets = document.getRootElement();

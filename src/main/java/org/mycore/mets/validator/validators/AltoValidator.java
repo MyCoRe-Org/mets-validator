@@ -21,6 +21,12 @@ import org.mycore.mets.validator.ValidatorUtil;
  */
 public class AltoValidator implements Validator {
 
+    /**
+     * Creates a new AltoValidator.
+     */
+    public AltoValidator() {
+    }
+
     @Override
     public void validate(Document document) throws ValidationException {
         Element mets = document.getRootElement();
