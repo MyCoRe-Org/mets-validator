@@ -10,6 +10,7 @@
   <artifactId>mets-validator</artifactId>
   <version>1.4-SNAPSHOT</version>
   <packaging>jar</packaging>
+  <name>METS Validator</name>
   <issueManagement>
     <system>GitHub</system>
     <url>https://github.com/MyCoRe-Org/mets-validator/issues</url>
