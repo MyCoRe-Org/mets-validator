@@ -8,7 +8,7 @@
   </parent>
   <groupId>org.mycore.mets</groupId>
   <artifactId>mets-validator</artifactId>
-  <version>1.5-SNAPSHOT</version>
+  <version>1.4-SNAPSHOT</version>
   <packaging>jar</packaging>
   <issueManagement>
     <system>GitHub</system>
