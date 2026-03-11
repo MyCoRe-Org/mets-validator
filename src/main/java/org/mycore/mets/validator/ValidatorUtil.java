@@ -76,9 +76,9 @@ public abstract class ValidatorUtil {
      * Checks if the element contains an attribute with the given name.
      * Throws an exception if there is no such attribute.
      * 
-     * @param element the elment to check
+     * @param element the element to check
      * @param attributeName name of the attribute
-     * @throws ValidationException the attribute does not exists
+     * @throws ValidationException the attribute does not exist
      * @return the value of the attribute
      */
     public static String checkNullAttribute(Element element, String attributeName) throws ValidationException {
